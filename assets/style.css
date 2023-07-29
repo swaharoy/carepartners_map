@@ -1,0 +1,190 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,500&family=Open+Sans:wght@300;400;600;700;800&display=swap');
+
+:root{
+    --background:#25323D;
+    --surface: #1F2933;
+    --primary: #00A9A5;
+    --secondary: #90C2E7;
+    --tertiary: #B33F62;
+
+    --tooltip: rgba(0,169,165, 0.90)
+}
+
+body{
+    background-color: var(--background);
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+} 
+
+.section{
+    background-color: var(--surface);
+    border-radius: 4px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
+}
+
+.section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 10px 20px 2px rgba(0, 0, 0, 0.25);
+}
+
+.bodyContainer{
+    display:grid;
+    grid-template-columns: 2fr 1fr;
+    padding: 0.75rem;
+    gap: 0.95rem
+}
+
+.contentContainer{
+    display: grid;
+    grid-template-rows: 1fr 4fr;
+    height: 100vh;
+    gap: 1rem
+}
+
+.titleContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.title{
+    color: var(--primary);
+    font-size: 4rem;
+    font-weight: 700;
+}
+
+.subtitle{
+    color: var(--secondary);
+    font-size: 2rem;
+    font-weight: 300;
+}
+
+#graphContainer{
+    padding: 0.75rem;
+}
+
+#graph{
+    height: 100%;
+}
+
+.sidebarContainer{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    gap: 3rem
+}
+
+.selectorContainer{
+    padding: 0.75rem;
+}
+
+.selector-label{
+    color: whitesmoke;
+    font-style: italic;
+    font-weight: 500;
+    margin: 8px 0px 4px 0px;
+}
+
+#color-var, #year-range-dropdowns, #donor-filters-dropdowns, #style-graph-dropdowns{
+    outline: solid 3px var(--tertiary);
+    border-radius: 5px;
+    padding: 5px
+}
+
+.info-label{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#info img:hover, 
+#info-dd img:hover, 
+#info-pd img:hover{
+    background-color: var(--secondary);
+    border-radius: 50%;
+}
+
+#info::before,
+#info-dd::before, 
+#info-pd::before{
+content: "";
+position: absolute;
+display: none;
+
+width: 0;
+height: 0;
+
+border-top-width: 0;
+border: 5px solid transparent;
+border-right-color: var(--tooltip);
+
+transform: translateX(175%);
+margin-top: 5px;
+z-index: 100;
+
+}
+
+#info::after,
+#info-dd::after, 
+#info-pd::after{
+    display: none;
+    position: absolute;
+    background: var(--tooltip);
+    z-index: 100;
+   
+    padding: 5px;
+    border-radius: 4px;
+    margin-top:-50px;
+    border: none;
+
+    color: black;
+    transform: translateX(10.2%);
+    white-space: pre;
+}
+
+#info::after{
+    content: "Donor level is defined by \A a donor's TOTAL giving history. \A  A donor's assigned level does \A NOT change by filtering years.";
+}
+
+#info-dd::after{
+    content: "Donor level is defined by \A a donor's TOTAL giving history. \A  A donor's assigned level does \A NOT change by filtering years.";
+}
+
+#info-pd::after{
+    content: "Donor level is defined by \A a donor's TOTAL giving history. \A  A donor's assigned level does \A NOT change by filtering years.";
+}
+
+#info:hover:before,
+#info:hover:after,
+#info-dd:hover::before, 
+#info-pd:hover::before,
+#info-dd:hover::after, 
+#info-pd:hover::after{
+    display: block
+}
+
+#style-graph-label{
+    display: flex;
+    justify-content: space-between
+}
+
+#show{
+    color: var(--secondary);
+}
+
+.upload-container{
+    padding: 0.75rem;
+}
+
+.upload-data{
+    border: 1px dashed var(--tertiary);
+    border-radius: 5px;
+    text-align: center;
+    line-height: 60px;
+    margin: 10px 10px 20px 10px;
+    color: var(--primary)
+}
+
+A{
+    font-weight: 700;
+}
