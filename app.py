@@ -45,23 +45,21 @@ def parse_upload(contents, filename, type):
             if any(df.columns.str.contains('unnamed',case = False)):
                 df = pd.read_excel(io.BytesIO(decoded), skiprows=[0])
         else:
-            return html.Div([
-                'Please upload .xlsx or .csv file.'
-            ])
+            return ('Please upload .xlsx or .csv file.', False, None)
     except Exception as e:
         print(e)
-        return html.Div([
-            'There was an error processing this file.'
-        ])
+        return ('There was an error processing this file.', False, None)
     
     #TODO: style error message
-    if valid_dataset(df, type) == False:
-                return html.Div([
-                    'The file does not contain the correct data fields'])
+    valid = valid_dataset(df, type)
+
+    if valid:
+        date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        store_data(type, content_string, date)   
+        return ('', valid, date)
     else:
-        store_data(type, content_string)
-    
-    return None
+        return ('The file does not contain the correct data fields', valid, None)
+
 
 def valid_dataset(df, type):
     if (type == 'upload-data-dd'):
@@ -69,8 +67,8 @@ def valid_dataset(df, type):
     else: 
         return all([item in df.columns for item in ['Activity Type', 'Postal Code']])
 
-def store_data (type, content):   
-    ddataset = {'time': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 'data': content}
+def store_data (type, content, date):   
+    ddataset = {'time': date, 'data': content}
 
     if(type == 'upload-data-dd'):
         collection_dd.insert_one(ddataset)
@@ -196,10 +194,8 @@ def display_choropleth(df_filtered, color_var, color_mode, color_scale, df_clean
     
     try:
         outlier = np.percentile(df_zip[color_var], [2, 98])
-        print('success')
     except:
         outlier = [df_zip[color_var].min(), df_zip[color_var].max()]
-        print('error')
 
     label = {'total_gift': 'Donation Amount', 'total_donors': 'Number of Donors'}
 
@@ -442,6 +438,14 @@ app.layout=html.Div(
                                                         id = 'info-dd',
                                                         )]
                                         ),
+                                        dcc.Dropdown(
+                                                    options=[ 
+                                                        {'label': 'Original Data Set', 'value': 'original'}
+                                                        ],
+                                                    value = "original",
+                                                    placeholder ='Select donor data set...',
+                                                    id = "select-dd",
+                                                ),
                                         dcc.Upload(
                                             className='upload-data',
                                             id='upload-data-dd',
@@ -481,21 +485,30 @@ app.layout=html.Div(
             ]
         )
 
-@callback(Output('error-div-dd', 'children'),
-              Input('upload-data-dd', 'contents'),
-              State('upload-data-dd', 'filename'))
+@callback(
+    Output('select-dd', 'options'),
+    Output('error-div-dd', 'children'),
+    Input('upload-data-dd', 'contents'),
+    State('upload-data-dd', 'filename'))
 def update_output_dd(content, name):
     if content is not None:
-        children = [parse_upload(content, name, 'upload-data-dd')]
-        return children
+        parsed = parse_upload(content, name, 'upload-data-dd')
+        children = [parsed[0]]
+        valid = parsed[1]
+        date = parsed[2]
+        print(children, valid, date)
+        return ({'hi': 'hi'}, children)
+    return ({}, None)
     
-@callback(Output('error-div-pd', 'children'),
-              Input('upload-data-pd', 'contents'),
-              State('upload-data-pd', 'filename'))
-def update_output_pd(content, name):
-    if content is not None:
-        children = [parse_upload(content, name, 'upload-data-pd')]
-        return children
+
+# @callback(
+#     Output('error-div-pd', 'children'),
+#     Input('upload-data-pd', 'contents'),
+#     State('upload-data-pd', 'filename'))
+# def update_output_pd(content, name):
+#     if content is not None:
+#         children = [parse_upload(content, name, 'upload-data-pd')]
+#         return children
     
 @callback(
     Output('graph', 'figure'),
