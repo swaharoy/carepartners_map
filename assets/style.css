@@ -72,7 +72,6 @@ body{
     display: flex;
     flex-direction: column;
     height: 100vh;
-    gap: 3rem
 }
 
 .selectorContainer{
@@ -84,6 +83,13 @@ body{
     font-style: italic;
     font-weight: 500;
     margin: 8px 0px 4px 0px;
+}
+
+#error-div-dd, #error-div-pd{
+    color: var(--secondary);
+    font-style: italic;
+    font-weight: 300;
+    margin: -15px 0px 4px 10px;
 }
 
 #color-var, #year-range-dropdowns, #donor-filters-dropdowns, #style-graph-dropdowns{

@@ -50,13 +50,12 @@ def parse_upload(contents, filename, type):
         print(e)
         return ('There was an error processing this file.', False, None)
     
-    #TODO: style error message
     valid = valid_dataset(df, type)
 
     if valid:
         date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         store_data(type, content_string, date)   
-        return ('', valid, date)
+        return ('File successfully uploaded.', valid, date)
     else:
         return ('The file does not contain the correct data fields', valid, None)
 
@@ -486,19 +485,23 @@ app.layout=html.Div(
         )
 
 @callback(
-    Output('select-dd', 'options'),
     Output('error-div-dd', 'children'),
+    Output('select-dd', 'options'),
     Input('upload-data-dd', 'contents'),
-    State('upload-data-dd', 'filename'))
-def update_output_dd(content, name):
+    State('upload-data-dd', 'filename'),
+    State('select-dd', 'options'),)
+def update_output_dd(content, name, options):
     if content is not None:
         parsed = parse_upload(content, name, 'upload-data-dd')
         children = [parsed[0]]
         valid = parsed[1]
         date = parsed[2]
-        print(children, valid, date)
-        return ({'hi': 'hi'}, children)
-    return ({}, None)
+        options.append({'label': date, 'value': date})
+   
+        return (children, options)
+    
+
+    return (None, options)
     
 
 # @callback(
