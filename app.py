@@ -33,7 +33,7 @@ collection_pd: Collection = database.get_collection('programdata')
 #collection_dd.delete_many({})
 
 # create documents
-def parse_upload(contents, filename, type):
+def parse_upload(contents, filename, dstype):
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
     try:
@@ -52,22 +52,22 @@ def parse_upload(contents, filename, type):
         print(e)
         return 'There was an error processing this file.'
     
-    valid = valid_dataset(df, type)
+    valid = valid_dataset(df, dstype)
 
     if valid:
         date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        store_data(type, content_string, date, filename)   
+        store_data(dstype, content_string, date, filename)   
         return 'File successfully uploaded.'
     else:
         return 'The file does not contain the correct data fields.'
 
-def valid_dataset(df, type):
-    if (type == 'upload-data-dd'):
+def valid_dataset(df, dstype):
+    if (dstype == 'upload-data-dd'):
         return all([item in df.columns for item in ['Donor ID', 'Zip/Postal', 'Donor Type', 'Flags', 'Date', 'Gift Amount']])
     else: 
         return all([item in df.columns for item in ['Activity Type', 'Postal Code']])
 
-def store_data (type, content, date, filename):   
+def store_data (dstype, content, date, filename):   
     ddataset = {'time': date, 'filename': filename, 'data': content}
 
     if(type == 'upload-data-dd'):
@@ -89,11 +89,11 @@ def create_options(dstype):
 
     return new_options
 
-def decode_df(type, ts):
+def decode_df(dstype, ts):
 
-    if(type == 'select-dd'):
+    if(dstype == 'select-dd'):
         doc = collection_dd.find_one({'time': ts})
-    elif(type == 'select-pd'):
+    elif(dstype == 'select-pd'):
         doc = collection_pd.find_one({'time': ts})
     
     filename = doc['filename']
@@ -112,9 +112,9 @@ def decode_df(type, ts):
                 df = pd.read_excel(io.BytesIO(decoded), skiprows=[0])
     except Exception as e:
         print(e)
-        if(type == 'select-dd'):
+        if(dstype == 'select-dd'):
             df = df_clean
-        elif(type == 'select-pd'):
+        elif(dstype == 'select-pd'):
             df = df_clean2
     
     return df
