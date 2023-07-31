@@ -288,10 +288,10 @@ def display_choropleth(df_filtered, color_var, color_mode, color_scale, df_clean
     
     return fig
 
-df_og = pd.read_excel('data/donordata0.xlsx', skiprows=[0])
+df_og = decode_df('select-dd', 'Original Data Set (7/10/23)')
 df_clean = clean_data(df_og.copy())
 
-df_og2 = pd.read_csv('data/programdata0.csv')
+df_og2 = decode_df('select-pd', 'Original Data Set (7/18/23)')
 df_clean2 = clean_data2(df_og2.copy())
 
 ### App
