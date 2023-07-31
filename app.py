@@ -30,7 +30,13 @@ database: Database = mongo_client.get_database('carepartners')
 collection_dd: Collection = database.get_collection('donordata')
 collection_pd: Collection = database.get_collection('programdata')
 
-# create/get documents
+#collection_dd.delete_many({})
+
+#TODO: add orginal datasets to database (ONLY ONCE, delete before deploy)
+#collection_dd.insert_one({'time': 'original', 'data': ''})
+#collection_pd.insert_one({'time': 'original', 'data': ''})
+
+# create documents
 def parse_upload(contents, filename, type):
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
@@ -54,11 +60,10 @@ def parse_upload(contents, filename, type):
 
     if valid:
         date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        store_data(type, content_string, date)   
+        store_data(type, content_string, date, filename)   
         return ('File successfully uploaded.', valid, date)
     else:
         return ('The file does not contain the correct data fields', valid, None)
-
 
 def valid_dataset(df, type):
     if (type == 'upload-data-dd'):
@@ -66,13 +71,54 @@ def valid_dataset(df, type):
     else: 
         return all([item in df.columns for item in ['Activity Type', 'Postal Code']])
 
-def store_data (type, content, date):   
-    ddataset = {'time': date, 'data': content}
+def store_data (type, content, date, filename):   
+    ddataset = {'time': date, 'filename': filename, 'data': content}
 
     if(type == 'upload-data-dd'):
         collection_dd.insert_one(ddataset)
     else:
         collection_pd.insert_one(ddataset)
+
+def create_options(dstype):
+
+    if(dstype == 'select-dd'):
+        doc_list = list(collection_dd.find({}))
+    elif(dstype == 'select-pd'):
+        doc_list = list(collection_pd.find({}))
+
+    new_options = [{'label':i, 'value':i} for i in doc_list['time']]
+
+    return new_options
+
+def decode_df(type, ts):
+
+    if(type == 'select-dd'):
+        doc = collection_dd.findOne({'time': ts})
+    elif(type == 'select-pd'):
+        doc = collection_pd.findOne({'time': ts})
+    
+    filename = doc['filename']
+    content_string = doc['data']
+    decoded = base64.b64decode(content_string)
+    
+    try:
+        if 'csv' in filename:
+            df = pd.read_csv(
+                io.StringIO(decoded.decode('utf-8')))
+            if any(df.columns.str.contains('unnamed',case = False)):
+                df = pd.read_csv(io.BytesIO(decoded), skiprows=[0])
+        elif 'xls' in filename:
+            df = pd.read_excel(io.BytesIO(decoded))
+            if any(df.columns.str.contains('unnamed',case = False)):
+                df = pd.read_excel(io.BytesIO(decoded), skiprows=[0])
+    except Exception as e:
+        print(e)
+        if(type == 'select-dd'):
+            df = df_clean
+        elif(type == 'select-pd'):
+            df = df_clean2
+    
+    return df
 
 ### Layer 1
 def clean_data(df):
