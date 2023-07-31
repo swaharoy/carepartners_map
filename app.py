@@ -32,10 +32,6 @@ collection_pd: Collection = database.get_collection('programdata')
 
 #collection_dd.delete_many({})
 
-#TODO: add orginal datasets to database (ONLY ONCE, delete before deploy)
-#collection_dd.insert_one({'time': 'original', 'data': ''})
-#collection_pd.insert_one({'time': 'original', 'data': ''})
-
 # create documents
 def parse_upload(contents, filename, type):
     content_type, content_string = contents.split(',')
@@ -63,7 +59,7 @@ def parse_upload(contents, filename, type):
         store_data(type, content_string, date, filename)   
         return 'File successfully uploaded.'
     else:
-        return 'The file does not contain the correct data fields'
+        return 'The file does not contain the correct data fields.'
 
 def valid_dataset(df, type):
     if (type == 'upload-data-dd'):
@@ -487,10 +483,7 @@ app.layout=html.Div(
                                                         )]
                                         ),
                                         dcc.Dropdown(
-                                                    options=[ 
-                                                        {'label': 'Original Data Set', 'value': 'original'}
-                                                        ],
-                                                    value = "original",
+                                                    options=[],
                                                     placeholder ='Select donor data set...',
                                                     id = "select-dd",
                                                 ),
@@ -514,6 +507,11 @@ app.layout=html.Div(
                                                             id = 'info-pd',
                                                             )]
                                         ),
+                                        dcc.Dropdown(
+                                                    options=[],
+                                                    placeholder ='Select donor data set...',
+                                                    id = "select-pd",
+                                                ),
                                         dcc.Upload(
                                             className='upload-data',
                                             id='upload-data-pd',
@@ -547,16 +545,23 @@ def update_output_dd(content, name):
     options = create_options('select-dd')
 
     return (children, options)
-    
 
-# @callback(
-#     Output('error-div-pd', 'children'),
-#     Input('upload-data-pd', 'contents'),
-#     State('upload-data-pd', 'filename'))
-# def update_output_pd(content, name):
-#     if content is not None:
-#         children = [parse_upload(content, name, 'upload-data-pd')]
-#         return children
+@callback(
+    Output('error-div-pd', 'children'),
+    Output('select-pd', 'options'),
+    Input('upload-data-pd', 'contents'),
+    State('upload-data-pd', 'filename'))
+def update_output_dd(content, name):
+    if content is not None:
+        children = parse_upload(content, name, 'upload-data-pd')
+    else:
+        children = None
+   
+    options = create_options('select-pd')
+
+    return (children, options)  
+
+
     
 @callback(
     Output('graph', 'figure'),
@@ -568,9 +573,13 @@ def update_output_dd(content, name):
     Input('donor-level', 'value'),
     Input('color-mode', 'value'),
     Input('color-scale', 'value'),
-    Input('show', 'value'))
-def update_figure(color_var, start_year, end_year, donor_type, donor_flag, donor_level, color_mode, color_scale, show):
-    print([color_var, start_year, end_year, donor_type, donor_flag, donor_level, color_mode, color_scale, show])
+    Input('show', 'value'),
+    Input('select-dd', 'options'),
+    Input('select-pd', 'options'))
+def update_figure(color_var, start_year, end_year, donor_type, donor_flag, donor_level, color_mode, color_scale, show, select_dd, select_pd):
+
+    print(select_dd, select_pd)    
+    
     df_filtered = filter_years(df_clean, start_year, end_year)
 
     if (0 < len(donor_type) < 6):
