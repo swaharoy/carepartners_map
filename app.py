@@ -51,19 +51,19 @@ def parse_upload(contents, filename, type):
             if any(df.columns.str.contains('unnamed',case = False)):
                 df = pd.read_excel(io.BytesIO(decoded), skiprows=[0])
         else:
-            return ('Please upload .xlsx or .csv file.', False, None)
+            return 'Please upload .xlsx or .csv file.'
     except Exception as e:
         print(e)
-        return ('There was an error processing this file.', False, None)
+        return 'There was an error processing this file.'
     
     valid = valid_dataset(df, type)
 
     if valid:
         date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         store_data(type, content_string, date, filename)   
-        return ('File successfully uploaded.', valid, date)
+        return 'File successfully uploaded.'
     else:
-        return ('The file does not contain the correct data fields', valid, None)
+        return 'The file does not contain the correct data fields'
 
 def valid_dataset(df, type):
     if (type == 'upload-data-dd'):
@@ -86,7 +86,10 @@ def create_options(dstype):
     elif(dstype == 'select-pd'):
         doc_list = list(collection_pd.find({}))
 
-    new_options = [{'label':i, 'value':i} for i in doc_list['time']]
+    new_options = []
+    for i in range(len(doc_list)):
+        ts = doc_list[i]['time']
+        new_options.append({'label': ts, 'value':ts})
 
     return new_options
 
@@ -534,20 +537,16 @@ app.layout=html.Div(
     Output('error-div-dd', 'children'),
     Output('select-dd', 'options'),
     Input('upload-data-dd', 'contents'),
-    State('upload-data-dd', 'filename'),
-    State('select-dd', 'options'),)
-def update_output_dd(content, name, options):
+    State('upload-data-dd', 'filename'))
+def update_output_dd(content, name):
     if content is not None:
-        parsed = parse_upload(content, name, 'upload-data-dd')
-        children = [parsed[0]]
-        valid = parsed[1]
-        date = parsed[2]
-        options.append({'label': date, 'value': date})
+        children = parse_upload(content, name, 'upload-data-dd')
+    else:
+        children = None
    
-        return (children, options)
-    
+    options = create_options('select-dd')
 
-    return (None, options)
+    return (children, options)
     
 
 # @callback(
