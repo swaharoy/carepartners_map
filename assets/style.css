@@ -72,6 +72,7 @@ body{
     display: flex;
     flex-direction: column;
     height: 100vh;
+    gap: 0.75rem;
 }
 
 .selectorContainer{
@@ -154,11 +155,11 @@ z-index: 100;
 }
 
 #info-dd::after{
-    content: "Donor level is defined by \A a donor's TOTAL giving history. \A  A donor's assigned level does \A NOT change by filtering years.";
+    content: "In DonorPerfect, run\A the 'InteractiveDonorMap' \A report in the Easy Reports folder \A and export as an EXCEL file. \A This report template includes \A the following fields: Donor ID,  \A Zip/Postal, Donor Type, Flags, \A Date, Gift Amount. \A No edits should be made.";
 }
 
 #info-pd::after{
-    content: "Donor level is defined by \A a donor's TOTAL giving history. \A  A donor's assigned level does \A NOT change by filtering years.";
+    content: "Input CSV file including all \A volunteers with the \A following fields: \A Activity Type, Postal Code."
 }
 
 #info:hover:before,
