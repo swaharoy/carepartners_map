@@ -92,9 +92,9 @@ def create_options(dstype):
 def decode_df(type, ts):
 
     if(type == 'select-dd'):
-        doc = collection_dd.findOne({'time': ts})
+        doc = collection_dd.find_one({'time': ts})
     elif(type == 'select-pd'):
-        doc = collection_pd.findOne({'time': ts})
+        doc = collection_pd.find_one({'time': ts})
     
     filename = doc['filename']
     content_string = doc['data']
@@ -574,13 +574,19 @@ def update_output_dd(content, name):
     Input('color-mode', 'value'),
     Input('color-scale', 'value'),
     Input('show', 'value'),
-    Input('select-dd', 'options'),
-    Input('select-pd', 'options'))
+    Input('select-dd', 'value'),
+    Input('select-pd', 'value'))
 def update_figure(color_var, start_year, end_year, donor_type, donor_flag, donor_level, color_mode, color_scale, show, select_dd, select_pd):
 
-    print(select_dd, select_pd)    
-    
-    df_filtered = filter_years(df_clean, start_year, end_year)
+    df1 = df_clean
+    df2 = df_clean2
+
+    if select_dd != None:
+        df1 = clean_data(decode_df('select-dd', select_dd).copy())
+    if select_pd != None:
+        df2 = clean_data2(decode_df('select-pd', select_pd).copy())
+
+    df_filtered = filter_years(df1, start_year, end_year)
 
     if (0 < len(donor_type) < 6):
         df_filtered = filter_type(df_filtered, donor_type)
@@ -596,7 +602,7 @@ def update_figure(color_var, start_year, end_year, donor_type, donor_flag, donor
     else:
         disp = False
 
-    fig = display_choropleth(df_filtered, color_var, color_mode, color_scale, df_clean2, disp)
+    fig = display_choropleth(df_filtered, color_var, color_mode, color_scale, df2, disp)
     return fig
 
 if __name__ == '__main__':
