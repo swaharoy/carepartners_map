@@ -1,23 +1,18 @@
-# old imports
 import pandas as pd
-from dash import Dash, dcc, html, Input, Output
-
+from dash import Dash, dcc, html, Input, Output, State, callback
 import plotly.express as px
 import numpy as np
 import math
 import json
-
-# new imports
 import os
 from dotenv import load_dotenv 
 from pymongo import MongoClient
 from pymongo.collection import Collection
 from pymongo.database import Database
-
 import base64
 import datetime
 import io
-from dash import dash_table, State, callback
+
 
 ### MongoDB
 # access MongoDB Atlas cluster0
