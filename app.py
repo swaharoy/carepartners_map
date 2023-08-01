@@ -297,6 +297,7 @@ df_clean2 = clean_data2(df_og2.copy())
 ### App
 # instantiate app
 app = Dash(__name__)
+server = app.server
 
 # create app layout
 app.layout=html.Div(
@@ -606,5 +607,5 @@ def update_figure(color_var, start_year, end_year, donor_type, donor_flag, donor
     return fig
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8000)
+    app.run_server(debug=False, port=8000, host="0.0.0.0")
 
