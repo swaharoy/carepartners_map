@@ -296,7 +296,7 @@ df_clean2 = clean_data2(df_og2.copy())
 
 ### App
 # instantiate app
-app = Dash(__name__)
+app = Dash(__name__,assets_url_path='assets')
 server = app.server
 
 # create app layout
