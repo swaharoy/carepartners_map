@@ -2,7 +2,7 @@
 
 <img src="readme_images/carepartners_map_preview.png">
 
-This Flash-based Dash app was designed in partnership with CarePartners, a Houston nonprofit serving people with dementia and their caregivers. Using Pandas and Plotly, over 21,000+ donor records are analyzed and displayed in an interactive choropleth map of Texas. Various filters can be applied to show important trends in giving. CarePartners staff have the ability to upload new data through the interface due to the application's connection to MongoDB.
+This Flash-based **Dash** app was designed for CarePartners, a Houston nonprofit serving people with dementia and their caregivers. Using **Pandas** and **Plotly**, over **21,000+ donor records** are analyzed and displayed in an interactive choropleth map of Texas. Various filters can be applied to show important trends in giving. CarePartners staff have the ability to upload new data through the interface due to the application's connection to **MongoDB**.
 
 ## Key Features
 
@@ -23,14 +23,14 @@ This Flash-based Dash app was designed in partnership with CarePartners, a Houst
 
 ## Sample Maps
 
-Distribution of Donations of All Time
+#### Distribution of Donations of All Time
 <img src="readme_images/donationAmount_2020-2023_business-foundation.png">
 
-Distribution of Number of Volunteer Donors in 2020-2023
+#### Distribution of Number of Volunteer Donors in 2020-2023
 <img src="readme_images/donationAmount_all.png">
 
-Distribution of Donations from Businesses and Foundations in 2020-2023
+#### Distribution of Donations from Businesses and Foundations in 2020-2023
 <img src="readme_images/donorNumber_2020-2023_volunteers.png">
 
-Distribution of Number of Major Gift List Donors of All Time
+#### Distribution of Number of Major Gift List Donors of All Time
 <img src="readme_images/donorNumber_all_majorGiftList.png">
